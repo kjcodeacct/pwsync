@@ -6,16 +6,34 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	testBitwardenCSV = "bitwarden_example.csv"
+)
+
 func TestOpenBitwardenExportFile(t *testing.T) {
 
-	testFile := "bitwarden_example.csv"
-
-	bwExport, err := openBitwardenExportFile(testFile)
+	bwExport, err := openBitwardenExport(testBitwardenCSV)
 	require.NoError(t, err)
 
-	require.Equal(t, 4, len(bwExport))
+	require.Equal(t, 4, len(bwExport.Entries))
 
-	for _, bwEntry := range bwExport {
+	for _, bwEntry := range bwExport.Entries {
 		require.NotEqual(t, bwEntry.Name, "")
 	}
+}
+
+func TestConvertBitwarden(t *testing.T) {
+
+	bwExport, err := openBitwardenExport(testBitwardenCSV)
+	require.NoError(t, err)
+
+	require.Equal(t, 4, len(bwExport.Entries))
+
+	exportName := bwExport.getName()
+
+	kpExport, err := bwExport.toKeepass()
+	require.NoError(t, err)
+
+	require.Equal(t, kpExport.KeepassGroup.Name, exportName)
+
 }
