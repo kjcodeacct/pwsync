@@ -18,13 +18,14 @@ const (
 	kpPassKey   = "Password"
 	kpNotesKey  = "Notes"
 	kpURLKey    = "URL"
+
+	kpBackupName = "pwsync_backup"
 )
 
 type KeepassExport struct {
 	Platform     string
 	Timestamp    time.Time
 	ShaHash      string
-	OriginalCSV  string
 	KeepassGroup gokeepasslib.Group
 }
 

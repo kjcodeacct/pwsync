@@ -68,6 +68,23 @@ func openBitwardenExport(filepath string) (*BitwardenExport, error) {
 	return newBWExport, nil
 }
 
+func unmarshalBitwardenExport(content string) (*BitwardenExport, error) {
+
+	entries := []BitwardenEntry{}
+
+	err := gocsv.UnmarshalBytes([]byte(content), &entries)
+	if err != nil {
+		return nil, err
+	}
+
+	newBWExport := &BitwardenExport{
+		Timestamp: time.Now(),
+		Entries:   entries,
+	}
+
+	return newBWExport, nil
+}
+
 func (this *BitwardenExport) getName() string {
 	name := fmt.Sprintf("%s-%s", Bitwarden, this.Timestamp.Format("02.01.2006"))
 
@@ -139,15 +156,19 @@ func (this *BitwardenExport) toKeepass() (*KeepassExport, error) {
 		return nil, err
 	}
 
-	subGroup := gokeepasslib.NewGroup()
-	subGroup.Name = "bitwarden csv"
+	csvGroup := gokeepasslib.NewGroup()
+	csvGroup.Name = kpBackupName
+
 	csvEntry := gokeepasslib.NewEntry()
-	csvEntry.Values = append(csvEntry.Values, mkValue("bitwarden csv", csvContent))
+	csvEntry.Values = append(csvEntry.Values, mkValue(kpTitleKey, kpBackupName))
+	csvEntry.Values = append(csvEntry.Values, mkValue(kpNotesKey, csvContent))
+
+	csvGroup.Entries = append(csvGroup.Entries, csvEntry)
+	rootGroup.Groups = append(rootGroup.Groups, csvGroup)
 
 	newExport := &KeepassExport{
 		Platform:     Bitwarden,
 		Timestamp:    this.Timestamp,
-		OriginalCSV:  csvContent,
 		KeepassGroup: rootGroup,
 	}
 
