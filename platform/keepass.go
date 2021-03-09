@@ -68,12 +68,16 @@ func (this *KeepassExport) Write(password string) (string, error) {
 
 	keepassDB.LockProtectedEntries()
 
-	var buff bytes.Buffer
-	gokeepasslib.NewEncoder(&buff)
+	buff := new(bytes.Buffer)
+	keepassEncoder := gokeepasslib.NewEncoder(buff)
+	err := keepassEncoder.Encode(keepassDB)
+	if err != nil {
+		return "", err
+	}
 
 	hash := sha256.New()
 
-	_, err := hash.Write(buff.Bytes())
+	_, err = hash.Write(buff.Bytes())
 	if err != nil {
 		return "", err
 	}
@@ -91,9 +95,9 @@ func (this *KeepassExport) Write(password string) (string, error) {
 
 	defer file.Close()
 
-	keepassEncoder := gokeepasslib.NewEncoder(file)
-	if err := keepassEncoder.Encode(keepassDB); err != nil {
-		panic(err)
+	_, err = file.Write(buff.Bytes())
+	if err != nil {
+		return "", err
 	}
 
 	return filename, nil
@@ -105,7 +109,7 @@ func mkValue(key string, value string) gokeepasslib.ValueData {
 
 func (this *KeepassExport) getName() string {
 
-	shortHash := this.ShaHash[0:4]
+	shortHash := this.ShaHash[0:7]
 	name := fmt.Sprintf("%s-%s-%s", this.Platform, this.Timestamp.Format("02.01.2006"), shortHash)
 
 	return name
