@@ -38,21 +38,20 @@ func GetDefaultConfig() *Config {
 
 	loginCmd := Command{
 		Name: LoginCMDType,
+		CMD:  []string{"exec_name_goes_here", "login", "${USERNAME}", "${PASSWORD}"},
 	}
 
 	logoutCMD := Command{
 		Name: LogoutCMDType,
+		CMD:  []string{"exec_name_goes_here", "logout"},
 	}
 
 	pullCMD := Command{
 		Name: PullCMDType,
+		CMD:  []string{"exec_name_goes_here", "export", "--format csv"},
 	}
 
-	pushCmd := Command{
-		Name: PushCMDType,
-	}
-
-	cmdList := []Command{loginCmd, logoutCMD, pullCMD, pushCmd}
+	cmdList := []Command{loginCmd, logoutCMD, pullCMD}
 
 	defaultCfg := Config{
 		Platform: strings.Join(platform.GetSupportedPlatforms(), ","),

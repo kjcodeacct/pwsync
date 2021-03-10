@@ -11,7 +11,7 @@ import (
 
 var cfgFile string
 
-var userCfg Config
+var userCfg *Config
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -35,9 +35,18 @@ func Execute() {
 }
 
 func init() {
+	var err error
+
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", ".pwsync.yaml", "Config file for pwsync")
+
+	userCfg, err = Open(cfgFile)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 }
 
 // initConfig reads in config file and ENV variables if set.
