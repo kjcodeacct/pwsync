@@ -8,7 +8,7 @@ import (
 	"github.com/tobischo/gokeepasslib/v3"
 )
 
-func TestConvertAndWrite(t *testing.T) {
+func TestBwConvertAndWrite(t *testing.T) {
 
 	kpExport, err := ConvertCSV(Bitwarden, testBitwardenCSV)
 	require.NoError(t, err)
@@ -49,7 +49,6 @@ func TestConvertAndWrite(t *testing.T) {
 					if entry.GetTitle() == kpBackupName {
 						temp := entry.Get(kpNotesKey)
 						backupContent = temp.Value.Content
-
 					}
 				}
 
@@ -64,5 +63,6 @@ func TestConvertAndWrite(t *testing.T) {
 	require.Equal(t, bwExport.Entries, compareBwExport.Entries)
 
 	err = os.Remove(filename)
+	require.NoError(t, err)
 	t.Log("cleaned up test files")
 }

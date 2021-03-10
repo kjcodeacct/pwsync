@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	testBitwardenCSV = "bitwarden_example.csv"
+	testBitwardenCSV = "example/bitwarden_example.csv"
 )
 
 func TestOpenBitwardenExportFile(t *testing.T) {
