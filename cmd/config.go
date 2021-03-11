@@ -8,8 +8,14 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+const (
+	defaultTimeout = 10
+)
+
 type Config struct {
 	Platform string    `yaml:"platform"`
+	Password string    `yaml:"password,omitempty"`
+	Timeout  int       `yaml:"timeout"`
 	CmdList  []Command `yaml:"cmdList"`
 }
 
@@ -55,6 +61,7 @@ func GetDefaultConfig() *Config {
 
 	defaultCfg := Config{
 		Platform: strings.Join(platform.GetSupportedPlatforms(), ","),
+		Timeout:  defaultTimeout,
 		CmdList:  cmdList,
 	}
 

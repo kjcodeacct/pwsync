@@ -20,6 +20,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
 		err := initPwSync()
 		if err != nil {
 			fmt.Println(err)
@@ -33,14 +34,8 @@ func init() {
 }
 
 func initPwSync() error {
-
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
 	fileExists := true
-	if _, err := os.Stat(filepath.Join(cwd, cfgFile)); os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(currentDir, cfgFile)); os.IsNotExist(err) {
 		fileExists = false
 	}
 
@@ -49,7 +44,7 @@ func initPwSync() error {
 	}
 
 	defaultCfg := GetDefaultConfig()
-	err = WriteConfig(defaultCfg, filepath.Join(cwd, cfgFile))
+	err := WriteConfig(defaultCfg, filepath.Join(currentDir, cfgFile))
 	if err != nil {
 		return err
 	}

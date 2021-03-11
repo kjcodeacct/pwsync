@@ -15,6 +15,7 @@ import (
 
 const (
 	ConvertCMDType = "convert"
+	InitCMDType    = "init"
 	LoginCMDType   = "login"
 	LogoutCMDType  = "logout"
 	PullCMDType    = "pull"
@@ -70,9 +71,7 @@ func RunCommand(cmd string, args []string) error {
 	signal.Notify(sizeCh, syscall.SIGWINCH)
 	go func() {
 		for range sizeCh {
-			if err := pty.InheritSize(os.Stdin, ptmx); err != nil {
-				fmt.Printf("error resizing pty: %s\n", err.Error())
-			}
+			pty.InheritSize(os.Stdin, ptmx)
 		}
 	}()
 

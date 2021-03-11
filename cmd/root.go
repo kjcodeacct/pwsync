@@ -13,6 +13,8 @@ var cfgFile string
 
 var userCfg *Config
 
+var currentDir string
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "pwsync",
@@ -36,17 +38,15 @@ func Execute() {
 
 func init() {
 	var err error
-
-	cobra.OnInitialize(initConfig)
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", ".pwsync.yaml", "Config file for pwsync")
-
-	userCfg, err = Open(cfgFile)
+	// Find current working directory.
+	currentDir, err = os.Getwd()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", ".pwsync.yaml", "Config file for pwsync")
+	cobra.OnInitialize(initConfig)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -55,22 +55,26 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find current working directory.
-		cwd, err := os.Getwd()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
 
 		// Search config in home directory with name ".pwsync" (without extension).
-		viper.AddConfigPath(cwd)
+		viper.AddConfigPath(currentDir)
 		viper.SetConfigName(".pwsync")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("using config file:", viper.ConfigFileUsed())
+	args := os.Args[1:]
+	if len(args) < 1 {
+		fmt.Println("no command provided")
 	}
+
+	if args[0] != InitCMDType {
+		var err error
+		userCfg, err = Open(cfgFile)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}
+
 }

@@ -3,7 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
+	"github.com/kjcodeacct/pwsync/files"
+	"github.com/kjcodeacct/pwsync/platform"
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +22,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("pull called")
+
 		err := pull(args)
 		if err != nil {
 			fmt.Println(err)
@@ -32,7 +36,6 @@ func init() {
 }
 
 func pull(args []string) error {
-
 	cmd, params, err := GetCommand(PullCMDType, userCfg)
 	if err != nil {
 		return err
@@ -40,10 +43,58 @@ func pull(args []string) error {
 
 	params = append(params, args...)
 
+	fileCh := files.ListenForType(currentDir, files.CSVExtension)
+
 	err = RunCommand(cmd, params)
 	if err != nil {
 		return err
 	}
 
+	var platformExportFile string
+	select {
+	case filepath := <-fileCh:
+		platformExportFile = filepath
+	case <-time.After(time.Second * time.Duration(userCfg.Timeout)):
+		fmt.Println("failed to find exported password db after 10 seconds")
+	}
+
+	defer func() {
+		err = files.Cleanup(platformExportFile, 1)
+		if err != nil {
+			fmt.Println("error cleaning up file", err)
+		}
+
+		fmt.Println("cleaned up file:", platformExportFile)
+	}()
+
+	kpExport, err := platform.ConvertCSV(userCfg.Platform, platformExportFile)
+	if err != nil {
+		return err
+	}
+
+	if userCfg.Password == "" {
+
+		prompt := promptui.Prompt{
+			Label: "Backup Password",
+			Mask:  '*',
+		}
+
+		password, err := prompt.Run()
+		if err != nil {
+			return err
+		}
+
+		userCfg.Password = password
+	}
+
+	newKpFilePath, err := kpExport.Write(userCfg.Password)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("pulled backup to:", newKpFilePath)
+
 	return nil
 }
+
+// func findExportFile(filename string)
