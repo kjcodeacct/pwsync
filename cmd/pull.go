@@ -56,6 +56,7 @@ func pull(args []string) error {
 		platformExportFile = filepath
 	case <-time.After(time.Second * time.Duration(userCfg.Timeout)):
 		fmt.Println("failed to find exported password db after 10 seconds")
+		return nil
 	}
 
 	defer func() {

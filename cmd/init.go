@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/kjcodeacct/pwsync/platform"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 )
+
+var initPlatform string
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -31,6 +35,10 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(initCmd)
+	rootCmd.PersistentFlags().StringVar(&initPlatform, "platform", "",
+		fmt.Sprintf("platform to create a default cfg (%s)",
+			strings.Join(platform.GetSupportedPlatforms(), ",")))
+
 }
 
 func initPwSync() error {
@@ -43,7 +51,8 @@ func initPwSync() error {
 		return fmt.Errorf("config already exists: %s", cfgFile)
 	}
 
-	defaultCfg := GetDefaultConfig()
+	defaultCfg := GetDefaultConfig(initPlatform)
+
 	err := WriteConfig(defaultCfg, filepath.Join(currentDir, cfgFile))
 	if err != nil {
 		return err

@@ -14,16 +14,17 @@ import (
 
 // these 'bw***Key' consts must match directly to csv tags in 'BitwardenEntry for conversion purposes
 const (
-	bwFolderKey    = "folder"
-	bwFavoriteKey  = "favorite"
-	bwTypeKey      = "type"
-	bwNameKey      = "name"
-	bwNotesKey     = "notes"
-	bwFieldsKey    = "fields"
-	bwLoginURIKey  = "login_uri"
-	bwLoginUserKey = "login_username"
-	bwLoginPassKey = "login_password"
-	bwLoginSeedKey = "login_totp"
+	bwFolderKey      = "folder"
+	bwFavoriteKey    = "favorite"
+	bwTypeKey        = "type"
+	bwNameKey        = "name"
+	bwNotesKey       = "notes"
+	bwFieldsKey      = "fields"
+	bwLoginURIKey    = "login_uri"
+	bwLoginUserKey   = "login_username"
+	bwLoginPassKey   = "login_password"
+	bwLoginSeedKey   = "login_totp"
+	BitwardenProcess = "bw"
 )
 
 type BitwardenExport struct {

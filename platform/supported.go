@@ -1,6 +1,8 @@
 package platform
 
-const Bitwarden = "bitwarden"
+const (
+	Bitwarden = "bitwarden"
+)
 
 var SupportedPlatforms = make(map[string]bool)
 

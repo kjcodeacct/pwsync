@@ -9,7 +9,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/kr/pty"
+	"github.com/creack/pty"
+	"github.com/davecgh/go-spew/spew"
 	"golang.org/x/term"
 )
 
@@ -20,6 +21,7 @@ const (
 	LogoutCMDType  = "logout"
 	PullCMDType    = "pull"
 	PushCMDType    = "push"
+	FetchCMDType   = "fetch"
 )
 
 func GetCommand(cmdName string, cfg *Config) (string, []string, error) {
@@ -35,10 +37,17 @@ func GetCommand(cmdName string, cfg *Config) (string, []string, error) {
 					newCMD = arg
 					cmdFound = true
 				} else {
-					tempList := strings.Split(arg, " ")
-					paramList = append(paramList, tempList...)
+					paramList = append(paramList, arg)
 				}
 			}
+		}
+	}
+
+	for i, param := range paramList {
+
+		envValue := checkEnv(param)
+		if envValue != "" {
+			paramList[i] = envValue
 		}
 	}
 
@@ -49,8 +58,27 @@ func GetCommand(cmdName string, cfg *Config) (string, []string, error) {
 	return newCMD, paramList, nil
 }
 
+func checkEnv(input string) string {
+
+	var envValue string
+	if strings.HasPrefix(input, "{") && strings.HasSuffix(input, "}") {
+		input = strings.ReplaceAll(input, "{", "")
+		input = strings.ReplaceAll(input, "}", "")
+		input = strings.ReplaceAll(input, " ", "")
+
+		envValue = os.Getenv(input)
+
+		if envValue == "" {
+			fmt.Println("env variable not found for:", input)
+		}
+	}
+
+	return envValue
+}
+
 func RunCommand(cmd string, args []string) error {
 
+	spew.Println("RUNNING", cmd, args)
 	c := exec.Command(cmd, args...)
 	// start cmd with pty
 	ptmx, err := pty.Start(c)

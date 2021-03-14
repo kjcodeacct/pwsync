@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/kjcodeacct/pwsync/platform"
+
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -40,34 +41,6 @@ func Open(filepath string) (*Config, error) {
 	return newConfig, nil
 }
 
-func GetDefaultConfig() *Config {
-
-	loginCmd := Command{
-		Name: LoginCMDType,
-		CMD:  []string{"exec_name_goes_here", "login", "${USERNAME}", "${PASSWORD}"},
-	}
-
-	logoutCMD := Command{
-		Name: LogoutCMDType,
-		CMD:  []string{"exec_name_goes_here", "logout"},
-	}
-
-	pullCMD := Command{
-		Name: PullCMDType,
-		CMD:  []string{"exec_name_goes_here", "export", "--format csv"},
-	}
-
-	cmdList := []Command{loginCmd, logoutCMD, pullCMD}
-
-	defaultCfg := Config{
-		Platform: strings.Join(platform.GetSupportedPlatforms(), ","),
-		Timeout:  defaultTimeout,
-		CmdList:  cmdList,
-	}
-
-	return &defaultCfg
-}
-
 func WriteConfig(cfg *Config, filename string) error {
 
 	buff, err := yaml.Marshal(&cfg)
@@ -88,4 +61,77 @@ func WriteConfig(cfg *Config, filename string) error {
 	}
 
 	return nil
+}
+
+func GetDefaultConfig(inputPlatform string) *Config {
+
+	defaultCfg := &Config{}
+
+	switch inputPlatform {
+	case platform.Bitwarden:
+		defaultCfg = getDefaultBwConfig()
+	default:
+		loginCmd := Command{
+			Name: LoginCMDType,
+			CMD:  []string{"exec_name_goes_here", "login"},
+		}
+
+		logoutCMD := Command{
+			Name: LogoutCMDType,
+			CMD:  []string{"exec_name_goes_here", "logout"},
+		}
+
+		pullCMD := Command{
+			Name: PullCMDType,
+			CMD:  []string{"exec_name_goes_here", "export"},
+		}
+
+		fetchCMD := Command{
+			Name: FetchCMDType,
+			CMD:  []string{"exec_name_goes_here", "sync"},
+		}
+
+		cmdList := []Command{loginCmd, logoutCMD, pullCMD, fetchCMD}
+
+		defaultCfg = &Config{
+			Platform: strings.Join(platform.GetSupportedPlatforms(), ","),
+			Timeout:  defaultTimeout,
+			CmdList:  cmdList,
+		}
+	}
+
+	return defaultCfg
+}
+
+func getDefaultBwConfig() *Config {
+
+	loginCmd := Command{
+		Name: LoginCMDType,
+		CMD:  []string{platform.BitwardenProcess, "login", "{PWSYNC_USERNAME}", "{PWSYNC_PASSWORD}"},
+	}
+
+	logoutCMD := Command{
+		Name: LogoutCMDType,
+		CMD:  []string{platform.BitwardenProcess, "logout"},
+	}
+
+	pullCMD := Command{
+		Name: PullCMDType,
+		CMD:  []string{platform.BitwardenProcess, "export"},
+	}
+
+	fetchCMD := Command{
+		Name: FetchCMDType,
+		CMD:  []string{platform.BitwardenProcess, "sync"},
+	}
+
+	cmdList := []Command{loginCmd, logoutCMD, pullCMD, fetchCMD}
+
+	defaultCfg := &Config{
+		Platform: platform.Bitwarden,
+		Timeout:  defaultTimeout,
+		CmdList:  cmdList,
+	}
+
+	return defaultCfg
 }
