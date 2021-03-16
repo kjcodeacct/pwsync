@@ -1,0 +1,49 @@
+url,username,password,extra,name,grouping,fav
+http://example2.com,test 2,test2!@#$,asdfasdf,nested test 2,test folder,0
+http://sn,,,"asdfasdf asdf 
+
+
+asdf
+ 
+
+asdf
+as
+df,
+   l
+;",note 2,test folder\note 2 folder,0
+http://sn,,,asdfasdfasdfasdfasdf,note 1,test folder,0
+http://sn,,,"NoteType:Address
+Language:en-US
+Title:mr
+First Name:John
+Middle Name:
+Last Name:Smith
+Username:
+Gender:
+Birthday:January,1,1999
+Company:
+Address 1:
+Address 2:
+Address 3:
+City / Town:
+County:
+State:
+Zip / Postal Code:
+Country:
+Timezone:
+Email Address:
+Phone:
+Evening Phone:
+Mobile Phone:
+Fax:
+Notes:",test addr,,0
+http://sn,,,"NoteType:Credit Card
+Language:en-US
+Name on Card:test name
+Type:visa
+Number:12345678
+Security Code:111
+Start Date:January,1999
+Expiration Date:January,2099
+Notes:asdfasdfasdf",test card name,,0
+http://example.com,test1,test1pass,asdfasdf,test 1,,1

@@ -70,9 +70,10 @@ func initConfig() {
 
 	if args[0] != InitCMDType {
 		var err error
-		userCfg, err = Open(cfgFile)
+		userCfg, err = OpenConfig(cfgFile)
 		if err != nil {
 			fmt.Println(err)
+			fmt.Println("please check pwsync config, or run 'pwsync init'")
 			os.Exit(1)
 		}
 	}

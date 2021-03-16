@@ -33,14 +33,14 @@ func init() {
 
 func login(args []string) error {
 
-	cmd, params, err := GetCommand(LoginCMDType, userCfg)
+	cmd, params, stdoutFile, err := GetCommand(LoginCMDType, userCfg)
 	if err != nil {
 		return err
 	}
 
 	params = append(params, args...)
 
-	err = RunCommand(cmd, params)
+	err = RunCommand(cmd, params, stdoutFile)
 	if err != nil {
 		return err
 	}

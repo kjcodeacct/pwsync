@@ -35,7 +35,7 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-	rootCmd.PersistentFlags().StringVar(&initPlatform, "platform", "",
+	initCmd.PersistentFlags().StringVar(&initPlatform, "platform", "",
 		fmt.Sprintf("platform to create a default cfg (%s)",
 			strings.Join(platform.GetSupportedPlatforms(), ",")))
 

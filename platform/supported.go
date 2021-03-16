@@ -2,12 +2,14 @@ package platform
 
 const (
 	Bitwarden = "bitwarden"
+	Lastpass  = "lastpass"
 )
 
 var SupportedPlatforms = make(map[string]bool)
 
 func init() {
 	SupportedPlatforms[Bitwarden] = true
+	SupportedPlatforms[Lastpass] = true
 }
 
 func Check(input string) bool {

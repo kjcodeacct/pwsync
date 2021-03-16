@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var cleanupPullFiles bool
+
 // pullCmd represents the pull command
 var pullCmd = &cobra.Command{
 	Use:   PullCMDType,
@@ -33,10 +35,12 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(pullCmd)
+	pullCmd.PersistentFlags().BoolVar(&cleanupPullFiles, "cleanup", true,
+		"auto cleanup pulled files")
 }
 
 func pull(args []string) error {
-	cmd, params, err := GetCommand(PullCMDType, userCfg)
+	cmd, params, stdoutFile, err := GetCommand(PullCMDType, userCfg)
 	if err != nil {
 		return err
 	}
@@ -45,7 +49,7 @@ func pull(args []string) error {
 
 	fileCh := files.ListenForType(currentDir, files.CSVExtension)
 
-	err = RunCommand(cmd, params)
+	err = RunCommand(cmd, params, stdoutFile)
 	if err != nil {
 		return err
 	}
@@ -55,17 +59,20 @@ func pull(args []string) error {
 	case filepath := <-fileCh:
 		platformExportFile = filepath
 	case <-time.After(time.Second * time.Duration(userCfg.Timeout)):
-		fmt.Println("failed to find exported password db after 10 seconds")
+		fmt.Printf("failed to find exported password db after 10 seconds, please check %s export file: %s\n",
+			userCfg.Platform, platformExportFile)
 		return nil
 	}
 
 	defer func() {
-		err = files.Cleanup(platformExportFile, 1)
-		if err != nil {
-			fmt.Println("error cleaning up file", err)
-		}
+		if cleanupPullFiles && platformExportFile != "" {
+			err = files.Cleanup(platformExportFile, 1)
+			if err != nil {
+				fmt.Println("error cleaning up file", err)
+			}
 
-		fmt.Println("cleaned up file:", platformExportFile)
+			fmt.Println("cleaned up file:", platformExportFile)
+		}
 	}()
 
 	kpExport, err := platform.ConvertCSV(userCfg.Platform, platformExportFile)
@@ -73,29 +80,33 @@ func pull(args []string) error {
 		return err
 	}
 
-	if userCfg.Password == "" {
+	if len(kpExport.KeepassGroup.Entries) > 0 || len(kpExport.KeepassGroup.Groups) > 0 {
+		if userCfg.Password == "" {
 
-		prompt := promptui.Prompt{
-			Label: "Backup Password",
-			Mask:  '*',
+			prompt := promptui.Prompt{
+				Label: "Backup Password",
+				Mask:  '*',
+			}
+
+			password, err := prompt.Run()
+			if err != nil {
+				return err
+			}
+
+			userCfg.Password = password
 		}
 
-		password, err := prompt.Run()
+		newKpFilePath, err := kpExport.Write(userCfg.Password)
 		if err != nil {
 			return err
 		}
 
-		userCfg.Password = password
+		fmt.Println("pulled backup to:", newKpFilePath)
+	} else {
+		fmt.Printf("no data backed up to database, please check %s export file: %s\n",
+			userCfg.Platform, platformExportFile)
+		cleanupPullFiles = false
 	}
-
-	newKpFilePath, err := kpExport.Write(userCfg.Password)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("pulled backup to:", newKpFilePath)
 
 	return nil
 }
-
-// func findExportFile(filename string)

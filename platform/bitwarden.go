@@ -12,7 +12,7 @@ import (
 	"github.com/tobischo/gokeepasslib/v3"
 )
 
-// these 'bw***Key' consts must match directly to csv tags in 'BitwardenEntry for conversion purposes
+// these 'bw***Key' consts must match directly to csv tags in BitwardenEntry for conversion purposes
 const (
 	bwFolderKey      = "folder"
 	bwFavoriteKey    = "favorite"
@@ -40,7 +40,7 @@ type BitwardenEntry struct {
 	Notes         string `csv:"notes"`
 	Fields        string `csv:"fields"`
 	LoginURI      string `csv:"login_uri"`
-	LoginUserName string `csv:"login_username"`
+	LoginUsername string `csv:"login_username"`
 	LoginPassword string `csv:"login_password"`
 	LoginTOTPSeed string `csv:"login_totp"`
 }
@@ -113,8 +113,8 @@ func (this *BitwardenExport) toKeepass() (*KeepassExport, error) {
 		kpEntry.Values = append(kpEntry.Values, mkValue(bwLoginURIKey, bwEntry.LoginURI))
 		kpEntry.Values = append(kpEntry.Values, mkValue(kpURLKey, bwEntry.LoginURI))
 
-		kpEntry.Values = append(kpEntry.Values, mkValue(bwLoginUserKey, bwEntry.LoginUserName))
-		kpEntry.Values = append(kpEntry.Values, mkValue(kpUserKey, bwEntry.LoginUserName))
+		kpEntry.Values = append(kpEntry.Values, mkValue(bwLoginUserKey, bwEntry.LoginUsername))
+		kpEntry.Values = append(kpEntry.Values, mkValue(kpUserKey, bwEntry.LoginUsername))
 
 		kpEntry.Values = append(kpEntry.Values, mkValue(bwLoginPassKey, bwEntry.LoginPassword))
 		kpEntry.Values = append(kpEntry.Values, mkValue(kpPassKey, bwEntry.LoginPassword))

@@ -31,14 +31,14 @@ func init() {
 }
 
 func logout(args []string) error {
-	cmd, params, err := GetCommand(LogoutCMDType, userCfg)
+	cmd, params, stdoutFile, err := GetCommand(LogoutCMDType, userCfg)
 	if err != nil {
 		return err
 	}
 
 	params = append(params, args...)
 
-	err = RunCommand(cmd, params)
+	err = RunCommand(cmd, params, stdoutFile)
 	if err != nil {
 		return err
 	}

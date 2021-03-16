@@ -40,11 +40,30 @@ func ConvertCSV(platform string, filepath string) (*KeepassExport, error) {
 			return nil, err
 		}
 
+		if len(bwExport.Entries) == 0 {
+			return nil, fmt.Errorf("no entries found for %s", platform)
+		}
+
 		newExport, err = bwExport.toKeepass()
 		if err != nil {
 			return nil, err
 		}
+	case Lastpass:
+		lpExport, err := openLastpassExport(filepath)
+		if err != nil {
+			return nil, err
+		}
 
+		if len(lpExport.Entries) == 0 {
+			return nil, fmt.Errorf("no entries found for %s", platform)
+		}
+
+		newExport, err = lpExport.toKeepass()
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("platform %s is unsupported", platform)
 	}
 
 	return newExport, nil

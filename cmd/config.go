@@ -11,6 +11,7 @@ import (
 
 const (
 	defaultTimeout = 10
+	noStdOutFile   = ""
 )
 
 type Config struct {
@@ -21,11 +22,12 @@ type Config struct {
 }
 
 type Command struct {
-	Name string   `yaml:"name"`
-	CMD  []string `yaml:"cmd"`
+	Name       string   `yaml:"name"`
+	CMD        []string `yaml:"cmd"`
+	StdOutFile string   `yaml:"stdoutFile,omitempty"`
 }
 
-func Open(filepath string) (*Config, error) {
+func OpenConfig(filepath string) (*Config, error) {
 
 	buff, err := os.ReadFile(filepath)
 	if err != nil {
@@ -70,6 +72,8 @@ func GetDefaultConfig(inputPlatform string) *Config {
 	switch inputPlatform {
 	case platform.Bitwarden:
 		defaultCfg = getDefaultBwConfig()
+	case platform.Lastpass:
+		defaultCfg = getDefaultLpConfig()
 	default:
 		loginCmd := Command{
 			Name: LoginCMDType,
@@ -111,8 +115,9 @@ func getDefaultBwConfig() *Config {
 	}
 
 	logoutCMD := Command{
-		Name: LogoutCMDType,
-		CMD:  []string{platform.BitwardenProcess, "logout"},
+		Name:       LogoutCMDType,
+		CMD:        []string{platform.BitwardenProcess, "logout"},
+		StdOutFile: "lastpass_export.csv",
 	}
 
 	pullCMD := Command{
@@ -128,7 +133,41 @@ func getDefaultBwConfig() *Config {
 	cmdList := []Command{loginCmd, logoutCMD, pullCMD, fetchCMD}
 
 	defaultCfg := &Config{
-		Platform: platform.Bitwarden,
+		Platform: platform.Lastpass,
+		Timeout:  defaultTimeout,
+		CmdList:  cmdList,
+	}
+
+	return defaultCfg
+}
+
+func getDefaultLpConfig() *Config {
+
+	loginCmd := Command{
+		Name: LoginCMDType,
+		CMD:  []string{platform.LastpassProcess, "login", "{PWSYNC_USERNAME}"},
+	}
+
+	logoutCMD := Command{
+		Name: LogoutCMDType,
+		CMD:  []string{platform.LastpassProcess, "logout"},
+	}
+
+	pullCMD := Command{
+		Name:       PullCMDType,
+		CMD:        []string{platform.LastpassProcess, "export"},
+		StdOutFile: "lastpass_export.csv",
+	}
+
+	fetchCMD := Command{
+		Name: FetchCMDType,
+		CMD:  []string{platform.LastpassProcess, "sync"},
+	}
+
+	cmdList := []Command{loginCmd, logoutCMD, pullCMD, fetchCMD}
+
+	defaultCfg := &Config{
+		Platform: platform.Lastpass,
 		Timeout:  defaultTimeout,
 		CmdList:  cmdList,
 	}

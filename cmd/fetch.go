@@ -33,14 +33,14 @@ func init() {
 
 func fetch(args []string) error {
 
-	cmd, params, err := GetCommand(FetchCMDType, userCfg)
+	cmd, params, stdoutFile, err := GetCommand(FetchCMDType, userCfg)
 	if err != nil {
 		return err
 	}
 
 	params = append(params, args...)
 
-	err = RunCommand(cmd, params)
+	err = RunCommand(cmd, params, stdoutFile)
 	if err != nil {
 		return err
 	}
