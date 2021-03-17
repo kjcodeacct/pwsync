@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/kjcodeacct/pwsync/runtime"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
@@ -11,7 +12,7 @@ import (
 
 var cfgFile string
 
-var userCfg *Config
+var userCfg *runtime.Config
 
 var currentDir string
 
@@ -68,9 +69,9 @@ func initConfig() {
 		fmt.Println("no command provided")
 	}
 
-	if args[0] != InitCMDType {
+	if args[0] != runtime.InitCMDType {
 		var err error
-		userCfg, err = OpenConfig(cfgFile)
+		userCfg, err = runtime.OpenConfig(cfgFile)
 		if err != nil {
 			fmt.Println(err)
 			fmt.Println("please check pwsync config, or run 'pwsync init'")

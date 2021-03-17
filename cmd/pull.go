@@ -7,6 +7,7 @@ import (
 
 	"github.com/kjcodeacct/pwsync/files"
 	"github.com/kjcodeacct/pwsync/platform"
+	"github.com/kjcodeacct/pwsync/runtime"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +16,7 @@ var cleanupPullFiles bool
 
 // pullCmd represents the pull command
 var pullCmd = &cobra.Command{
-	Use:   PullCMDType,
+	Use:   runtime.PullCMDType,
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -40,7 +41,7 @@ func init() {
 }
 
 func pull(args []string) error {
-	cmd, params, stdoutFile, err := GetCommand(PullCMDType, userCfg)
+	cmd, params, stdoutFile, err := runtime.GetCommand(runtime.PullCMDType, userCfg)
 	if err != nil {
 		return err
 	}
@@ -49,12 +50,13 @@ func pull(args []string) error {
 
 	fileCh := files.ListenForType(currentDir, files.CSVExtension)
 
-	err = RunCommand(cmd, params, stdoutFile)
+	err = runtime.RunCommand(cmd, params, stdoutFile)
 	if err != nil {
 		return err
 	}
 
 	var platformExportFile string
+
 	select {
 	case filepath := <-fileCh:
 		platformExportFile = filepath

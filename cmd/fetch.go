@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/kjcodeacct/pwsync/runtime"
 	"github.com/spf13/cobra"
 )
 
 // fetchCmd represents the fetch command
 var fetchCmd = &cobra.Command{
-	Use:   FetchCMDType,
+	Use:   runtime.FetchCMDType,
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -33,14 +34,14 @@ func init() {
 
 func fetch(args []string) error {
 
-	cmd, params, stdoutFile, err := GetCommand(FetchCMDType, userCfg)
+	cmd, params, stdoutFile, err := runtime.GetCommand(runtime.FetchCMDType, userCfg)
 	if err != nil {
 		return err
 	}
 
 	params = append(params, args...)
 
-	err = RunCommand(cmd, params, stdoutFile)
+	err = runtime.RunCommand(cmd, params, stdoutFile)
 	if err != nil {
 		return err
 	}

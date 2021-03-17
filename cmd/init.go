@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/kjcodeacct/pwsync/platform"
+	"github.com/kjcodeacct/pwsync/runtime"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 )
@@ -38,10 +39,10 @@ func init() {
 	initCmd.PersistentFlags().StringVar(&initPlatform, "platform", "",
 		fmt.Sprintf("platform to create a default cfg (%s)",
 			strings.Join(platform.GetSupportedPlatforms(), ",")))
-
 }
 
 func initPwSync() error {
+
 	fileExists := true
 	if _, err := os.Stat(filepath.Join(currentDir, cfgFile)); os.IsNotExist(err) {
 		fileExists = false
@@ -51,9 +52,9 @@ func initPwSync() error {
 		return fmt.Errorf("config already exists: %s", cfgFile)
 	}
 
-	defaultCfg := GetDefaultConfig(initPlatform)
+	defaultCfg := runtime.GetDefaultConfig(initPlatform)
 
-	err := WriteConfig(defaultCfg, filepath.Join(currentDir, cfgFile))
+	err := runtime.WriteConfig(defaultCfg, filepath.Join(currentDir, cfgFile))
 	if err != nil {
 		return err
 	}

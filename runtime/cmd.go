@@ -1,4 +1,4 @@
-package cmd
+package runtime
 
 import (
 	"fmt"
@@ -24,6 +24,7 @@ const (
 )
 
 func GetCommand(cmdName string, cfg *Config) (string, []string, string, error) {
+
 	cmdFound := false
 
 	var newCMD string
