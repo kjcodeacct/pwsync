@@ -1,1 +1,3 @@
 pwsync
+.pwsync.yaml
+*.kdbx
