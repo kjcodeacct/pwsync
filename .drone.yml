@@ -1,0 +1,28 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: build
+    image: golang
+    commands:
+      - go build
+      - go test -p 1 ./...
+
+  - name: build release binaries
+    image: golang
+    commands:
+      - make binaries
+    when:
+      event: tag
+
+  - name: publish release binaries
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: github_api_key
+      files: binaries/*.tar.gz
+    checksum:
+      - sha256
+    when:
+      event: tag
