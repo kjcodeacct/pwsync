@@ -11,13 +11,8 @@ import (
 // logoutCmd represents the logout command
 var logoutCmd = &cobra.Command{
 	Use:   runtime.LogoutCMDType,
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Logout of your password manager.",
+	Long:  `Logout of the desired password platform, executes the 'logout' command desginated by the password manager.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := logout(args)
 		if err != nil {

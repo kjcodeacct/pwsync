@@ -17,13 +17,8 @@ var cleanupPullFiles bool
 // pullCmd represents the pull command
 var pullCmd = &cobra.Command{
 	Use:   runtime.PullCMDType,
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Export and convert your password vault into a keepass database.",
+	Long:  `Exports the latest password vault into a CSV, then converts it to a keepass database`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		err := pull(args)

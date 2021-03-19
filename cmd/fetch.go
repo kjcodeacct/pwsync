@@ -11,13 +11,8 @@ import (
 // fetchCmd represents the fetch command
 var fetchCmd = &cobra.Command{
 	Use:   runtime.FetchCMDType,
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Fetch your latest password vault.",
+	Long:  `Fetches the latest password vault from desired password platform, executes the 'sync/fetch/update' command designated by the password manager.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		err := fetch(args)

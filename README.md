@@ -17,7 +17,8 @@
   - [Building](#building)
     - [Binaries](#binaries)
     - [CI/CD](#cicd)
-- [Support OS](#support-os)
+  - [Usage](#usage)
+- [Supported OS](#supported-os)
 - [Supported Password Platforms](#supported-password-platforms)
 - [Dependencies](#dependencies)
 
@@ -27,7 +28,7 @@ Pwsync is a convenient password backup tool to help with the following:
 * Backup proprietary password vaults into an encrypted [keepass](https://keepass.info/index.html) database.
 
 
-If you work with multiple password systems, or want backups of system critical passwords, this could be for you.
+If you work with multiple password systems, or want backups of system critical passwords, this is for you.
 
 ## Note
 Please see the list of [supported password platforms](#supported-password-platforms).
@@ -96,7 +97,28 @@ $ make binaries
 If you want to view steps used by <drone.io> for automated builds please view [.drone.yml](.drone.yml)
 
 
-# Support OS
+## Usage
+
+Commands
+* **init**
+  * Initialize the working directory for pwsync, and create the configuration file. (default .pwsync.yaml)
+  * Flags:
+
+    **--platform**  platform to create a default cfg (lastpass,bitwarden)
+
+* **login**
+  * Login to the desired password platform, executes the 'login' command desginated by the password manager.
+* **logout**
+  * Logout of the desired password platform, executes the 'logout' command desginated by the password manager.
+* **fetch**
+  *  Fetches the latest password vault from desired password platform, executes the 'sync/fetch/update' command designated by the password manager.
+* **pull**
+  * Exports the latest password vault into a CSV, then converts it to a keepass database.
+  * Flags:
+
+    **--cleanup** :  auto cleanup pulled files (default true)
+
+# Supported OS
 Currently pwsync is limited to the following Operating Systems:
 
 * Linux
