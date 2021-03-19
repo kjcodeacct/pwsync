@@ -111,13 +111,12 @@ func getDefaultBwConfig() *Config {
 
 	loginCmd := Command{
 		Name: LoginCMDType,
-		CMD:  []string{platform.BitwardenProcess, "login", "{PWSYNC_USERNAME}", "{PWSYNC_PASSWORD}"},
+		CMD:  []string{platform.BitwardenProcess, "login", "{PWSYNC_USERNAME}"},
 	}
 
 	logoutCMD := Command{
-		Name:       LogoutCMDType,
-		CMD:        []string{platform.BitwardenProcess, "logout"},
-		StdOutFile: "lastpass_export.csv",
+		Name: LogoutCMDType,
+		CMD:  []string{platform.BitwardenProcess, "logout"},
 	}
 
 	pullCMD := Command{
@@ -133,7 +132,7 @@ func getDefaultBwConfig() *Config {
 	cmdList := []Command{loginCmd, logoutCMD, pullCMD, fetchCMD}
 
 	defaultCfg := &Config{
-		Platform: platform.Lastpass,
+		Platform: platform.Bitwarden,
 		Timeout:  defaultTimeout,
 		CmdList:  cmdList,
 	}
