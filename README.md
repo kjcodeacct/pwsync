@@ -9,7 +9,6 @@
 
 - [Table of Contents](#table-of-contents)
 - [Overview](#overview)
-  - [Note](#note)
 - [Quick Start](#quick-start)
 - [Installing & Usage](#installing--usage)
     - [Binary Releases](#binary-releases)
@@ -18,9 +17,12 @@
     - [Binaries](#binaries)
     - [CI/CD](#cicd)
   - [Usage](#usage)
+  - [Configuration](#configuration)
+    - [Fields](#fields)
 - [Supported OS](#supported-os)
 - [Supported Password Platforms](#supported-password-platforms)
 - [Dependencies](#dependencies)
+- [Issues & Updates](#issues--updates)
 
 # Overview
 Pwsync is a convenient password backup tool to help with the following:
@@ -30,11 +32,17 @@ Pwsync is a convenient password backup tool to help with the following:
 
 If you work with multiple password systems, or want backups of system critical passwords, this is for you.
 
-## Note
+---
+
 Please see the list of [supported password platforms](#supported-password-platforms).
 
 **ALL** interaction with a password service is done with it's native command line application, pwsync **does not** make API calls directly to a password service. This is enables far more flexibility and reduces security issues.
 
+**ALL** exported password vaults from a given service **MUST** be in a unencrypted, CSV format.
+
+By default any unencrypted csv files are cleaned up in a secure manner.
+
+---
 # Quick Start
 
 First install your password services CLI application.
@@ -118,6 +126,79 @@ Commands
 
     **--cleanup** :  auto cleanup pulled files (default true)
 
+
+## Configuration
+
+Pwsync uses a yaml file for configuration of commands.
+
+### Fields
+* **platform**
+
+  Specifies your password platform to be used (bitwarden, lastpass, etc)
+
+* **timeout**
+
+  Specify the timeout waiting for vault updates, and exports, in seconds.
+
+* **cmdList**
+
+  List of commands, and their configurations, mapping to pwsync (login, logout, fetch, pull)
+
+  * **name**
+
+    Name of the command, this *must* match to a support subcommand of pwsync (login, logout, fetch, pull).
+
+  * **cmd**
+
+    This is the most critical configuration component, and matches to a password services command line application.
+    If this is not specified, you will *not* be able to successfully backup anything.
+
+    List of currently supported command line applications can be found here:
+
+    * [Supported Password Platforms](#supported-password-platforms)
+
+    Please note it is a *requirement* you have your password services command line application installed before configuring pwsync.
+
+    For advanced usage with command line parameters, please see the detailed example below.
+
+  *
+
+A detailed example is below:
+
+```yaml
+# platform - specify the password platform used
+platform: bitwarden
+# timeout - timeout for waiting for password vault updates and exports, in seconds, defaults to 10 seconds
+timeout: 10
+# cmdList - list of commands mapping to pwsync (login, logout, fetch, pull)
+cmdList:
+- name: login
+  # cmd - this specifies what executable to run, and the parameters to provide it
+  cmd:
+  # this executes the 'bw' command, either specify by name if it is in your PATH, or by absolute path
+  - bw
+  # this passes the command line argument 'login' to the executable 'bw'
+  - login
+  # this uses the environment variable 'PWSYNC_USERNAME' as an additional parameter
+  # all environment variables used *MUST* be between curly braces {}
+  - '{PWSYNC_USERNAME}'
+- name: logout
+  cmd:
+  - bw
+  - logout
+- name: pull
+  cmd:
+  - bw
+  - export
+  # in the event your password management application exports to stdout instead of a file, this can be supplemented here
+  stdoutFile: password_export.csv
+- name: fetch
+  cmd:
+  - bw
+  - sync
+
+```
+
 # Supported OS
 Currently pwsync is limited to the following Operating Systems:
 
@@ -126,6 +207,7 @@ Currently pwsync is limited to the following Operating Systems:
 * Mac/Darwin
 
 Unfortunately there is currently no windows support, as this application requires pseudo terminals, and the current package in use 'pty' does not support windows.
+
 If you are an avid windows user and want to add this feature, please [publish a pull request](https://github.com/kjcodeacct/pwsync/pulls).
 
 # Supported Password Platforms
@@ -140,5 +222,12 @@ If a password service you use is not availble please feel free to:
 * [Publish a pull request](https://github.com/kjcodeacct/pwsync/pulls)
 
 # Dependencies
-Golang version 1.14+
-Unix based system (Linux, Mac, BSD, etc)
+* Golang version 1.14+
+* Unix based system (Linux, Mac, BSD, etc)
+
+# Issues & Updates
+If there is a breaking change with a platforms commandline application, please:
+* [Create an issue](https://github.com/kjcodeacct/pwsync/issues)
+  * Document your error in the issue
+
+I will try to maintain this application, but I cannot account for every update
