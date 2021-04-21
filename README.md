@@ -28,6 +28,7 @@
 Pwsync is a convenient password backup tool to help with the following:
 
 * Backup proprietary password vaults into an encrypted [keepass](https://keepass.info/index.html) database.
+* Convert and migrate between proprietary password vaults.
 
 
 If you work with multiple password systems, or want backups of system critical passwords, this is for you.
