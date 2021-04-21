@@ -36,6 +36,10 @@ If you work with multiple password systems, or want backups of system critical p
 
 Please see the list of [supported password platforms](#supported-password-platforms).
 
+---
+
+**Security Note**
+
 **ALL** interaction with a password service is done with it's native command line application, pwsync **does not** make API calls directly to a password service. This is enables far more flexibility and reduces security issues.
 
 **ALL** exported password vaults from a given service **MUST** be in a unencrypted, CSV format.
